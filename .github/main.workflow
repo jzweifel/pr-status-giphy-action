@@ -9,7 +9,7 @@ workflow "Pull Request Status Checks" {
 }
 
 action "PR Status Giphy" {
-  uses = "jzweifel/pr-status-giphy-action@master"
+  uses = "./../"
 }
 
 action "Install NPM Dependencies" {
