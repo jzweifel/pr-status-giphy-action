@@ -3,9 +3,9 @@ workflow "Build and Publish" {
   resolves = "Docker Publish"
 }
 
-workflow "Pull Request Check Suites" {
-  on = "check_suite"
+workflow "Pull Request Status Checks" {
   resolves = "PR Status Giphy"
+  on = "pull_request"
 }
 
 action "PR Status Giphy" {
