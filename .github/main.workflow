@@ -8,18 +8,23 @@ action "Shell Lint" {
   args = "entrypoint.sh"
 }
 
-action "Test" {
-  uses = "actions/bin/bats@master"
-  args = "test/*.bats"
-}
-
 action "Docker Lint" {
   uses = "docker://replicated/dockerfilelint"
   args = ["Dockerfile"]
 }
 
+action "ESLint" {
+  uses = "actions/npm@master"
+  args = ["run lint"]
+}
+
+action "Test" {
+  uses = "actions/bin/bats@master"
+  args = "test/*.bats"
+}
+
 action "Build" {
-  needs = ["Shell Lint", "Test", "Docker Lint"]
+  needs = ["Shell Lint", "Docker Lint", "ESLint", "Test"]
   uses = "actions/docker/cli@master"
   args = "build -t pr-status-giphy-action ."
 }
