@@ -3,6 +3,15 @@ workflow "Build and Publish" {
   resolves = "Docker Publish"
 }
 
+workflow "Pull Request Check Suites" {
+  on = "check_suite"
+  resolves = "PR Status Giphy"
+}
+
+action "PR Status Giphy" {
+  uses = "jzweifel/pr-status-giphy-action@master"
+}
+
 action "Shell Lint" {
   uses = "actions/bin/shellcheck@master"
   args = "entrypoint.sh"
