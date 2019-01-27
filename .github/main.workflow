@@ -12,6 +12,17 @@ action "PR Status Giphy" {
   uses = "jzweifel/pr-status-giphy-action@master"
 }
 
+action "Install NPM Dependencies" {
+  uses = "actions/npm@master"
+  args = ["install"]
+}
+
+action "ESLint" {
+  needs = ["Install NPM Dependencies"]
+  uses = "actions/npm@master"
+  args = ["run lint"]
+}
+
 action "Shell Lint" {
   uses = "actions/bin/shellcheck@master"
   args = "entrypoint.sh"
@@ -20,11 +31,6 @@ action "Shell Lint" {
 action "Docker Lint" {
   uses = "docker://replicated/dockerfilelint"
   args = ["Dockerfile"]
-}
-
-action "ESLint" {
-  uses = "actions/npm@master"
-  args = ["run lint"]
 }
 
 action "Test" {
