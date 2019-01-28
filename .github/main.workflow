@@ -9,7 +9,7 @@ workflow "Pull Request Status Checks" {
 }
 
 action "PR Status Giphy" {
-  uses = "./../"
+  uses = "./"
 }
 
 action "Install NPM Dependencies" {
