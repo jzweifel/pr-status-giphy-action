@@ -1,7 +1,8 @@
 {
   "extends": ["eslint:recommended", "google", "prettier"],
   "env": {
-    "node": true
+    "node": true,
+    "es6": true
   },
   "plugins": ["prettier"],
   "rules": {
