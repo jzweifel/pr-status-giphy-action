@@ -34,25 +34,63 @@ console.log(
 
 console.log("Fetching check statuses...");
 
-axios
-  .get(
-    `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`,
-    {
-      headers: { Accept: acceptHeader, Authorization: authHeader }
-    }
-  )
-  .then(function(response) {
-    console.log(response.data);
-    response.data.check_runs.forEach(check => {
-      console.log(`Check ${check.name} has status ${check.state}`);
-    });
-  })
-  .catch(function(error) {
-    console.log(error);
-    process.exit(1);
-  });
+doChecks();
 
 setTimeout(function() {
   console.log("Reached maximum timeout");
   process.exit(1);
-}, 60000);
+}, 300000);
+
+/**
+ * @return {Promise}
+ */
+function doChecks() {
+  return fetchChecks()
+    .then(handleChecks)
+    .catch(function(error) {
+      console.log(error);
+      process.exit(1);
+    });
+}
+
+/**
+ * @return {Promise} Promise representing an HTTP GET to the check-runs endpoint
+ */
+function fetchChecks() {
+  return axios.get(
+    `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`,
+    {
+      headers: { Accept: acceptHeader, Authorization: authHeader }
+    }
+  );
+}
+
+/**
+ * TODO: Handle the checks. If any fails are found, post a thumbs down gif. If all succeed, post a thumbs up gif
+ * @return {Promise}
+ */
+function handleChecks({ data }) {
+  console.log(data);
+  data.check_runs.forEach(check => {
+    console.log(`Check ${check.name} has status ${check.status}`);
+  });
+
+  const filteredChecks = data.check_runs.filter(cr => cr.name !== githubAction);
+
+  const failedChecks = filteredChecks.filter(
+    cr => cr.status === "completed" && cr.conclusion === "failure"
+  );
+
+  if (failedChecks.length) {
+    console.log("Checks failed!");
+    process.exit(0);
+  }
+
+  const inProgressChecks = filteredChecks.filter(
+    cr => cr.status === "in_progress"
+  );
+
+  if (inProgressChecks.length) {
+    return doChecks();
+  }
+}
