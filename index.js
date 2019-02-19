@@ -35,9 +35,12 @@ console.log(
 console.log("Fetching check statuses...");
 
 axios
-  .get(`https://api.github.com/${githubRepo}/commits/${githubSha}/check-runs`, {
-    headers: { Accept: acceptHeader, Authorization: authHeader }
-  })
+  .get(
+    `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`,
+    {
+      headers: { Accept: acceptHeader, Authorization: authHeader }
+    }
+  )
   .then(function(response) {
     console.log(response);
   })
