@@ -43,7 +43,7 @@ setTimeout(function() {
  * @return {Promise}
  */
 function doChecks() {
-  console.log(`------ Scanning checks for commit ${githubSha}... ------`);
+  console.log(`------ Scanning checks... ------`);
   return fetchChecks()
     .then(handleChecks)
     .catch(function(error) {
@@ -69,11 +69,11 @@ function fetchChecks() {
  * @return {Promise}
  */
 function handleChecks({ data }) {
-  data.check_runs.forEach(check => {
+  const filteredChecks = data.check_runs.filter(cr => cr.name !== githubAction);
+
+  filteredChecks.forEach(check => {
     console.log(`Check ${check.name} has status ${check.status}`);
   });
-
-  const filteredChecks = data.check_runs.filter(cr => cr.name !== githubAction);
 
   const failedChecks = filteredChecks.filter(
     cr => cr.status === "completed" && cr.conclusion === "failure"
@@ -89,9 +89,9 @@ function handleChecks({ data }) {
   );
 
   if (inProgressChecks.length) {
-    return doChecks();
+    return new Promise(resolve => setTimeout(resolve, 5000)).then(doChecks);
   }
 
-  console.log("All checks successfully completed!");
+  console.log("All checks completed!");
   process.exit(0);
 }
