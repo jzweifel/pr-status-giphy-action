@@ -45,16 +45,16 @@ action "Build" {
   args = "build -t pr-status-giphy-action ."
 }
 
-action "Docker Tag" {
-  needs = ["Build"]
-  uses = "actions/docker/tag@master"
-  args = "pr-status-giphy-action jzweifel/pr-status-giphy-action --no-latest"
-}
-
 action "Publish Filter" {
   needs = ["Build"]
   uses = "actions/bin/filter@master"
   args = "branch master"
+}
+
+action "Docker Tag" {
+  needs = ["Publish Filter"]
+  uses = "actions/docker/tag@master"
+  args = "pr-status-giphy-action jzweifel/pr-status-giphy-action --no-latest"
 }
 
 action "Docker Login" {
