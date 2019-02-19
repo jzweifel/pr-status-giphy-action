@@ -42,7 +42,10 @@ axios
     }
   )
   .then(function(response) {
-    console.log(response);
+    console.log(response.data);
+    response.data.check_runs.forEach(check => {
+      console.log(`Check ${check.name} has status ${check.state}`);
+    });
   })
   .catch(function(error) {
     console.log(error);
