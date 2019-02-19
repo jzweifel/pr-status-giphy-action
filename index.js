@@ -32,8 +32,6 @@ console.log(
   } triggered by action ${githubEvent.action}.`
 );
 
-console.log("Fetching check statuses...");
-
 doChecks();
 
 setTimeout(function() {
@@ -45,6 +43,7 @@ setTimeout(function() {
  * @return {Promise}
  */
 function doChecks() {
+  console.log(`------ Scanning checks for commit ${githubSha}... ------`);
   return fetchChecks()
     .then(handleChecks)
     .catch(function(error) {
@@ -70,7 +69,6 @@ function fetchChecks() {
  * @return {Promise}
  */
 function handleChecks({ data }) {
-  console.log(data);
   data.check_runs.forEach(check => {
     console.log(`Check ${check.name} has status ${check.status}`);
   });
@@ -87,10 +85,13 @@ function handleChecks({ data }) {
   }
 
   const inProgressChecks = filteredChecks.filter(
-    cr => cr.status === "in_progress"
+    cr => cr.status === "queued" || cr.status === "in_progress"
   );
 
   if (inProgressChecks.length) {
     return doChecks();
   }
+
+  console.log("All checks successfully completed!");
+  process.exit(0);
 }
