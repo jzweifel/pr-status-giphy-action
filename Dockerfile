@@ -13,6 +13,4 @@ COPY LICENSE README.md THIRD_PARTY_NOTICE.md /
 
 COPY entrypoint.sh /entrypoint.sh
 
-RUN npm install
-
 ENTRYPOINT ["/entrypoint.sh"]
