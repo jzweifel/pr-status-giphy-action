@@ -106,6 +106,72 @@ function handleChecks({ data }) {
  * @return {Promise}
  */
 function postGiphyGifForTag(giphyTag) {
+  return deleteExistingComments()
+    .then(() => getGiphyGifForTag(giphyTag))
+    .then(postCommentWithGif);
+}
+
+/**
+ * @return {Promise}
+ */
+function deleteExistingComments() {
+  return getIssueComments().then(deleteCommentsFromAction);
+}
+
+/**
+ * @param {Array} comments an array of Github comment objects
+ * @return {Promise}
+ */
+function deleteCommentsFromAction(comments) {
+  const filteredComments = comments.filter(comment =>
+    comment.body.includes(commentFooter)
+  );
+
+  if (!filteredComments.length) {
+    return Promise.resolve();
+  }
+
+  console.log(
+    `Found ${filteredComments.length} existing comment(s). Deleting...`
+  );
+
+  return Promise.all(filteredComments.map(deleteComment));
+}
+
+/**
+ * @param {any} comment an object representing a Github comment
+ * @return {Promise}
+ */
+function deleteComment(comment) {
+  return axios.delete(
+    `https://api.github.com/repos/${githubRepo}/issues/comments/${comment.id}`,
+    {
+      headers: { Accept: acceptHeader, Authorization: authHeader }
+    }
+  );
+}
+
+/**
+ * @return {Promise}
+ */
+function getIssueComments() {
+  return axios
+    .get(
+      `https://api.github.com/repos/${githubRepo}/issues/${
+        githubEvent.number
+      }/comments`,
+      {
+        headers: { Accept: acceptHeader, Authorization: authHeader }
+      }
+    )
+    .then(res => res.data);
+}
+
+/**
+ * @param {string} giphyTag the tag to use to search giphy
+ * @return {Promise}
+ */
+function getGiphyGifForTag(giphyTag) {
   return axios
     .get("https://api.giphy.com/v1/gifs/random", {
       params: {
@@ -115,16 +181,21 @@ function postGiphyGifForTag(giphyTag) {
         api_key: giphyApiKey
       }
     })
-    .then(giphyRes => {
-      const gif = giphyRes.data.data;
-      return axios.post(
-        `https://api.github.com/repos/${githubRepo}/issues/${
-          githubEvent.number
-        }/comments`,
-        { body: `![${giphyTag}](${gif.image_url})\n\n${commentFooter}` },
-        {
-          headers: { Accept: acceptHeader, Authorization: authHeader }
-        }
-      );
-    });
+    .then(giphyRes => giphyRes.data.data);
+}
+
+/**
+ * @param {any} gif an object representing a gif from Giphy
+ * @return {Promise}
+ */
+function postCommentWithGif(gif) {
+  return axios.post(
+    `https://api.github.com/repos/${githubRepo}/issues/${
+      githubEvent.number
+    }/comments`,
+    { body: `![${gif.title}](${gif.image_url})\n\n${commentFooter}` },
+    {
+      headers: { Accept: acceptHeader, Authorization: authHeader }
+    }
+  );
 }
