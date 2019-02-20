@@ -39,13 +39,13 @@ console.log(
 
 doChecks()
   .then(() => process.exit(0))
-  .catch(function(error) {
+  .catch(error => {
     console.log(error);
     process.exit(1);
   });
 
-setTimeout(function() {
-  console.log("Reached maximum timeout");
+setTimeout(() => {
+  console.log("Reached maximum timeout.");
   process.exit(1);
 }, 300000);
 
@@ -53,7 +53,7 @@ setTimeout(function() {
  * @return {Promise}
  */
 function doChecks() {
-  console.log(`------ Scanning checks... ------`);
+  console.log("Scanning checks...");
   return fetchChecks().then(handleChecks);
 }
 
@@ -75,11 +75,6 @@ function fetchChecks() {
  */
 function handleChecks({ data }) {
   const filteredChecks = data.check_runs.filter(cr => cr.name !== githubAction);
-
-  filteredChecks.forEach(check => {
-    console.log(`Check ${check.name} has status ${check.status}`);
-  });
-
   const failedChecks = filteredChecks.filter(
     cr => cr.status === "completed" && cr.conclusion === "failure"
   );
@@ -127,9 +122,7 @@ function deleteCommentsFromAction(comments) {
     comment.body.includes(commentFooter)
   );
 
-  if (!filteredComments.length) {
-    return Promise.resolve();
-  }
+  if (!filteredComments.length) return Promise.resolve();
 
   console.log(
     `Found ${filteredComments.length} existing comment(s). Deleting...`
@@ -189,6 +182,7 @@ function getGiphyGifForTag(giphyTag) {
  * @return {Promise}
  */
 function postCommentWithGif(gif) {
+  console.log("Posting comment with gif...");
   return axios.post(
     `https://api.github.com/repos/${githubRepo}/issues/${
       githubEvent.number
