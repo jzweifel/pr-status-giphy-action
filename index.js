@@ -134,12 +134,10 @@ function postCommentWithGif(gif) {
 
 /**
  * @param {string} giphyTag the tag to use to search giphy
- * @return {Promise} Promise representing the deletion and then posting of a comment with a gif for the given giphy tag.
+ * @return {Promise} Promise representing the posting of a comment with a gif for the given giphy tag.
  */
 function postGiphyGifForTag(giphyTag) {
-  return deleteExistingComments()
-    .then(() => getGiphyGifForTag(giphyTag))
-    .then(postCommentWithGif);
+  return getGiphyGifForTag(giphyTag).then(postCommentWithGif);
 }
 
 /**
@@ -148,7 +146,8 @@ function postGiphyGifForTag(giphyTag) {
  */
 function scanChecksAndPostGif() {
   console.log("Scanning checks...");
-  return fetchChecks()
+  return deleteExistingComments()
+    .then(() => fetchChecks())
     .then(getStatusOfChecks)
     .then(status => {
       switch (status) {
