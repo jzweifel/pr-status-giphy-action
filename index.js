@@ -10,8 +10,14 @@ const githubRepo = process.env.GITHUB_REPOSITORY || "";
 const githubSha = process.env.GITHUB_SHA || "";
 const githubToken = process.env.GITHUB_TOKEN || "";
 const githubApiVersion = "v3";
+const githubCheckRunsUri = `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`;
+const githubPrCommentsUri = `https://api.github.com/repos/${githubRepo}/issues/${
+  githubEvent.number
+}/comments`;
+const githubApiHeaders = { Accept: acceptHeader, Authorization: authHeader };
 
 const giphyApiKey = process.env.GIPHY_API_KEY || "";
+const giphyRandomGifUri = "https://api.giphy.com/v1/gifs/random";
 
 const acceptHeader = `application/vnd.github.${githubApiVersion}+json; application/vnd.github.antiope-preview+json`;
 const authHeader = `token ${githubToken}`;
@@ -45,12 +51,9 @@ function scanChecksAndPostGif() {
  * @return {Promise} Promise representing an HTTP GET to the check-runs endpoint
  */
 function fetchChecks() {
-  return axios.get(
-    `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`,
-    {
-      headers: { Accept: acceptHeader, Authorization: authHeader }
-    }
-  );
+  return axios.get(githubCheckRunsUri, {
+    headers: githubApiHeaders
+  });
 }
 
 /**
@@ -92,14 +95,9 @@ function deleteExistingComments() {
  */
 function getIssueComments() {
   return axios
-    .get(
-      `https://api.github.com/repos/${githubRepo}/issues/${
-        githubEvent.number
-      }/comments`,
-      {
-        headers: { Accept: acceptHeader, Authorization: authHeader }
-      }
-    )
+    .get(githubPrCommentsUri, {
+      headers: githubApiHeaders
+    })
     .then(res => res.data);
 }
 
@@ -126,12 +124,9 @@ function deleteCommentsFromAction(comments) {
  * @return {Promise} Promise representing the HTTP DELETE of a comment.
  */
 function deleteComment(comment) {
-  return axios.delete(
-    `https://api.github.com/repos/${githubRepo}/issues/comments/${comment.id}`,
-    {
-      headers: { Accept: acceptHeader, Authorization: authHeader }
-    }
-  );
+  return axios.delete(`${githubPrCommentsUri}/${comment.id}`, {
+    headers: githubApiHeaders
+  });
 }
 
 /**
@@ -140,7 +135,7 @@ function deleteComment(comment) {
  */
 function getGiphyGifForTag(giphyTag) {
   return axios
-    .get("https://api.giphy.com/v1/gifs/random", {
+    .get(giphyRandomGifUri, {
       params: {
         tag: giphyTag,
         rating: "pg-13",
@@ -158,12 +153,10 @@ function getGiphyGifForTag(giphyTag) {
 function postCommentWithGif(gif) {
   console.log("Posting comment with gif...");
   return axios.post(
-    `https://api.github.com/repos/${githubRepo}/issues/${
-      githubEvent.number
-    }/comments`,
+    githubPrCommentsUri,
     { body: `![${gif.title}](${gif.image_url})\n\n${commentFooter}` },
     {
-      headers: { Accept: acceptHeader, Authorization: authHeader }
+      headers: githubApiHeaders
     }
   );
 }
