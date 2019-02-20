@@ -105,7 +105,7 @@ function handleChecks({ data }) {
  */
 function postGiphyGifForTag(giphyTag) {
   return axios
-    .get("https://api.giphy.com/v1/gifs", {
+    .get("https://api.giphy.com/v1/gifs/random", {
       params: {
         tag: giphyTag,
         rating: "pg-13",
