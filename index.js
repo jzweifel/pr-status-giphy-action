@@ -32,7 +32,12 @@ console.log(
   } triggered by action ${githubEvent.action}.`
 );
 
-doChecks();
+doChecks()
+  .then(() => process.exit(0))
+  .catch(function(error) {
+    console.log(error);
+    process.exit(1);
+  });
 
 setTimeout(function() {
   console.log("Reached maximum timeout");
@@ -44,12 +49,7 @@ setTimeout(function() {
  */
 function doChecks() {
   console.log(`------ Scanning checks... ------`);
-  return fetchChecks()
-    .then(handleChecks)
-    .catch(function(error) {
-      console.log(error);
-      process.exit(1);
-    });
+  return fetchChecks().then(handleChecks);
 }
 
 /**
@@ -81,8 +81,7 @@ function handleChecks({ data }) {
 
   if (failedChecks.length) {
     console.log("Checks failed!");
-    postGiphyGifForTag("thumbs-down");
-    process.exit(0);
+    return postGiphyGifForTag("thumbs-down");
   }
 
   const inProgressChecks = filteredChecks.filter(
@@ -94,8 +93,7 @@ function handleChecks({ data }) {
   }
 
   console.log("All checks completed!");
-  postGiphyGifForTag("thumbs-up");
-  process.exit(0);
+  return postGiphyGifForTag("thumbs-up");
 }
 
 /**
