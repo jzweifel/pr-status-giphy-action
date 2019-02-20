@@ -10,8 +10,9 @@ const githubRepo = process.env.GITHUB_REPOSITORY || "";
 const githubSha = process.env.GITHUB_SHA || "";
 const githubToken = process.env.GITHUB_TOKEN || "";
 const githubApiVersion = "v3";
-const githubCheckRunsUri = `https://api.github.com/repos/${githubRepo}/commits/${githubSha}/check-runs`;
-const githubPrCommentsUri = `https://api.github.com/repos/${githubRepo}/issues/${
+const githubRepoUri = `https://api.github.com/repos/${githubRepo}`;
+const githubCheckRunsUri = `${githubRepoUri}/commits/${githubSha}/check-runs`;
+const githubPrCommentsUri = `${githubRepoUri}/issues/${
   githubEvent.number
 }/comments`;
 const githubAcceptHeader = `application/vnd.github.${githubApiVersion}+json; application/vnd.github.antiope-preview+json`;
@@ -69,7 +70,7 @@ function getIssueComments() {
  * @return {Promise} Promise representing the HTTP DELETE of a comment.
  */
 function deleteComment(comment) {
-  return axios.delete(`${githubPrCommentsUri}/${comment.id}`, {
+  return axios.delete(`${githubRepoUri}/issues/comments/${comment.id}`, {
     headers: githubApiHeaders
   });
 }
