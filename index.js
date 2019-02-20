@@ -81,6 +81,7 @@ function handleChecks({ data }) {
 
   if (failedChecks.length) {
     console.log("Checks failed!");
+    postGiphyGifForTag("thumbs-down");
     process.exit(0);
   }
 
@@ -93,5 +94,22 @@ function handleChecks({ data }) {
   }
 
   console.log("All checks completed!");
+  postGiphyGifForTag("thumbs-up");
   process.exit(0);
+}
+
+/**
+ * @param {string} giphyTag the tag to use to search giphy
+ * @return {Promise}
+ */
+function postGiphyGifForTag(giphyTag) {
+  return axios.post(
+    `https://api.github.com/repos/${githubRepo}/issues/${
+      githubEvent.number
+    }/comments`,
+    { body: giphyTag },
+    {
+      headers: { Accept: acceptHeader, Authorization: authHeader }
+    }
+  );
 }
