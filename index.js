@@ -1,5 +1,6 @@
 /* eslint no-console: 0 */
 const axios = require("axios");
+const giphy = require("giphy-api")();
 const NEUTRAL_ERROR_CODE = process.env.GITHUB_WORKFLOW ? 78 : 0;
 
 const githubEventPath = process.env.GITHUB_EVENT_PATH || "";
@@ -101,13 +102,21 @@ function handleChecks({ data }) {
  * @return {Promise}
  */
 function postGiphyGifForTag(giphyTag) {
-  return axios.post(
-    `https://api.github.com/repos/${githubRepo}/issues/${
-      githubEvent.number
-    }/comments`,
-    { body: giphyTag },
-    {
-      headers: { Accept: acceptHeader, Authorization: authHeader }
-    }
-  );
+  return giphy
+    .random({
+      tag: giphyTag,
+      rating: "pg-13",
+      fmt: "json"
+    })
+    .then(gif =>
+      axios.post(
+        `https://api.github.com/repos/${githubRepo}/issues/${
+          githubEvent.number
+        }/comments`,
+        { body: `![${giphyTag}](${gif.embed_url})` },
+        {
+          headers: { Accept: acceptHeader, Authorization: authHeader }
+        }
+      )
+    );
 }

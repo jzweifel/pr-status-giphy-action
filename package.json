@@ -35,6 +35,7 @@
     "pretty-quick": "1.10.0"
   },
   "dependencies": {
-    "axios": "0.18.0"
+    "axios": "0.18.0",
+    "giphy-api": "2.0.1"
   }
 }
