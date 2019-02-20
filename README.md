@@ -6,6 +6,10 @@ It will automatically clean up an existing comment before making a new one if ch
 
 Works best when used in a workflow that runs on the `pull_request` event.
 
+![thumbs-up-pr](media/thumbs-up-pr.gif)
+
+![thumbs-down-pr](media/thumbs-down-pr.gif)
+
 ## Usage
 
 ```
