@@ -19,7 +19,7 @@ workflow "Pull Request Status Checks" {
 }
 
 action "PR Status Giphy" {
-  uses = "./"
+  uses = "jzweifel/pr-status-giphy-action@master"
   secrets = ["GITHUB_TOKEN", "GIPHY_API_KEY"]
 }
 ```
