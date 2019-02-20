@@ -10,7 +10,7 @@ workflow "Pull Request Status Checks" {
 
 action "PR Status Giphy" {
   uses = "./"
-  secrets = ["GITHUB_TOKEN"]
+  secrets = ["GITHUB_TOKEN", "GIPHY_API_KEY"]
 }
 
 action "Install NPM Dependencies" {
