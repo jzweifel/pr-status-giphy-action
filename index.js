@@ -119,7 +119,7 @@ function postGiphyGifForTag(giphyTag) {
         `https://api.github.com/repos/${githubRepo}/issues/${
           githubEvent.number
         }/comments`,
-        { body: `![${giphyTag}](${gif.embed_url})` },
+        { body: `![${giphyTag}](${gif.image_url})` },
         {
           headers: { Accept: acceptHeader, Authorization: authHeader }
         }
