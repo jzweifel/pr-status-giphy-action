@@ -34,13 +34,8 @@ action "Docker Lint" {
   args = ["Dockerfile"]
 }
 
-action "Test" {
-  uses = "actions/bin/bats@master"
-  args = "test/*.bats"
-}
-
 action "Build" {
-  needs = ["Shell Lint", "Docker Lint", "ESLint", "Test"]
+  needs = ["Shell Lint", "Docker Lint", "ESLint"]
   uses = "actions/docker/cli@master"
   args = "build -t pr-status-giphy-action ."
 }
