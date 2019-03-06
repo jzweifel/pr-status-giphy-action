@@ -1,7 +1,10 @@
-# ignore all files by default
-*
+src/node_modules
+*.md
+.gitignore
+*.iml
+.idea
+env
 # include required files with an exception
-!entrypoint.sh
 !LICENSE
 !README.md
 !THIRD_PARTY_NOTICE.md
