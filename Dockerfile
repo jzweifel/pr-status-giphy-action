@@ -5,7 +5,7 @@ COPY ./src /action
 
 ENTRYPOINT ["/action/entrypoint.sh"]
 
-LABEL version="1.0.1"
+LABEL version="1.0.2"
 LABEL "repository"="https://github.com/jzweifel/pr-status-giphy-action"
 LABEL "homepage"="http://github.com/jzweifel"
 LABEL "maintainer"="Jacob Zweifel <jacob@jacobzweifel.com>"
