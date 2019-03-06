@@ -15,18 +15,18 @@ action "PR Status Giphy" {
 
 action "Install NPM Dependencies" {
   uses = "actions/npm@master"
-  args = ["install"]
+  args = ["--prefix src install src"]
 }
 
 action "ESLint" {
   needs = ["Install NPM Dependencies"]
   uses = "actions/npm@master"
-  args = ["run lint"]
+  args = ["--prefix src run lint"]
 }
 
 action "Shell Lint" {
   uses = "actions/bin/shellcheck@master"
-  args = "entrypoint.sh"
+  args = "src/entrypoint.sh"
 }
 
 action "Docker Lint" {
