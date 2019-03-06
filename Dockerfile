@@ -1,13 +1,9 @@
 FROM node:10-slim
 
 COPY LICENSE README.md THIRD_PARTY_NOTICE.md /
+COPY ./src /action
 
-COPY entrypoint.sh /entrypoint.sh
-COPY index.js /index.js
-COPY package.json /package.json
-COPY package-lock.json /package-lock.json
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/action/entrypoint.sh"]
 
 LABEL version="1.0.1"
 LABEL "repository"="https://github.com/jzweifel/pr-status-giphy-action"

@@ -8,7 +8,7 @@ function setup() {
 }
 
 @test "entrypoint runs successfully" {
-  run $GITHUB_WORKSPACE/entrypoint.sh
+  run $GITHUB_WORKSPACE/src/entrypoint.sh
   echo "$output"
   [ "$status" -eq 0 ]
 }
