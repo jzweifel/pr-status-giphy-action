@@ -1,0 +1,13 @@
+on: pull_request
+name: Pull Request Status Checks
+jobs:
+  pRStatusGiphy:
+    name: PR Status Giphy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: PR Status Giphy
+      uses: ./
+      env:
+        GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
