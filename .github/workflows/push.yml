@@ -1,0 +1,46 @@
+on: push
+name: Build and Publish
+jobs:
+  installNPMDependencies:
+    name: Install NPM Dependencies
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Install NPM Dependencies
+      uses: actions/npm@master
+      with:
+        args: '"--prefix src install src"'
+    - name: ESLint
+      uses: actions/npm@master
+      with:
+        args: '"--prefix src run lint"'
+    - name: Docker Lint
+      uses: docker://replicated/dockerfilelint
+      with:
+        args: Dockerfile
+    - name: Shell Lint
+      uses: actions/bin/shellcheck@master
+      with:
+        args: src/entrypoint.sh
+    - name: Build
+      uses: actions/docker/cli@master
+      with:
+        args: build -t pr-status-giphy-action .
+    - name: Publish Filter
+      uses: actions/bin/filter@master
+      with:
+        args: branch master
+    - name: Docker Login
+      uses: actions/docker/login@master
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Docker Tag
+      uses: actions/docker/tag@master
+      with:
+        args: pr-status-giphy-action jzweifel/pr-status-giphy-action --no-latest
+    - name: Docker Publish
+      uses: actions/docker/cli@master
+      with:
+        args: push jzweifel/pr-status-giphy-action
