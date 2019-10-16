@@ -10,7 +10,9 @@ jobs:
       with:
         node-version: 10.x
     - run: npm install
+      working-directory: ./src
     - run: npm run lint
+      working-directory: ./src
   docker_lint:
     name: Docker Lint
     runs-on: ubuntu-latest
