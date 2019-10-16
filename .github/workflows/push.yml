@@ -1,46 +1,43 @@
 on: push
 name: Build and Publish
 jobs:
-  installNPMDependencies:
-    name: Install NPM Dependencies
+  npm_lint:
+    name: Node Lint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Install NPM Dependencies
-      uses: actions/npm@master
+    - uses: actions/setup-node@master
       with:
-        args: '"--prefix src install src"'
-    - name: ESLint
-      uses: actions/npm@master
-      with:
-        args: '"--prefix src run lint"'
-    - name: Docker Lint
-      uses: docker://replicated/dockerfilelint
-      with:
-        args: Dockerfile
-    - name: Shell Lint
-      uses: actions/bin/shellcheck@master
-      with:
-        args: src/entrypoint.sh
-    - name: Build
-      uses: actions/docker/cli@master
-      with:
-        args: build -t pr-status-giphy-action .
-    - name: Publish Filter
-      uses: actions/bin/filter@master
-      with:
-        args: branch master
-    - name: Docker Login
-      uses: actions/docker/login@master
+        node-version: 10.x
+    - run: npm install
+    - run: npm run lint
+  docker_lint:
+    name: Docker Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: luke142367/Docker-Lint-Action@v1.0.0
       env:
-        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Docker Tag
-      uses: actions/docker/tag@master
+        TARGET: Dockerfile
+  shell_lint:
+    name: Shell Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: ludeeus/actions/shellcheck@master
+  docker_build:
+    needs: [npm_lint, docker_lint, shell_lint]
+    name: Docker Build
+    runs-on: ubuntu-latest
+    steps:
+    - run: docker build -t pr-status-giphy-action .
+  docker_tag_publish:
+    name: Docker Tag and Publish
+    runs-on: ubuntu-latest
+    if: github.ref == 'master'
+    steps:
+    - uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        args: pr-status-giphy-action jzweifel/pr-status-giphy-action --no-latest
-    - name: Docker Publish
-      uses: actions/docker/cli@master
-      with:
-        args: push jzweifel/pr-status-giphy-action
+        name: jzweifel/pr-status-giphy-action
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        registry: docker.pkg.github.com
