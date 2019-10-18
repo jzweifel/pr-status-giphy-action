@@ -44,7 +44,7 @@ jobs:
     - uses: actions/checkout@master
     - uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: jzweifel/pr-status-giphy-action/pr-status-giphy-action
+        name: docker.pkg.github.com/jzweifel/pr-status-giphy-action/pr-status-giphy-action
         password: ${{ secrets.DOCKER_PASSWORD }}
         username: ${{ secrets.DOCKER_USERNAME }}
         registry: docker.pkg.github.com
