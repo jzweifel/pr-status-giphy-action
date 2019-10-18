@@ -13,15 +13,18 @@ Works best when used in a workflow that runs on the `pull_request` event.
 ## Usage
 
 ```
-workflow "Pull Request Status Checks" {
-  resolves = "PR Status Giphy"
-  on = "pull_request"
-}
-
-action "PR Status Giphy" {
-  uses = "jzweifel/pr-status-giphy-action@master"
-  secrets = ["GITHUB_TOKEN", "GIPHY_API_KEY"]
-}
+on: pull_request
+name: Pull Request Status Checks
+jobs:
+  pRStatusGiphy:
+    name: PR Status Giphy
+    runs-on: ubuntu-latest
+    steps:
+    - name: PR Status Giphy
+      uses: jzweifel/pr-status-giphy-action@master
+      env:
+        GIPHY_API_KEY: ${{ secrets.GIPHY_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Secrets
