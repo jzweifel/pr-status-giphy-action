@@ -5,7 +5,7 @@ jobs:
     name: PR Status Giphy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
     - name: PR Status Giphy
       uses: ./
       env:

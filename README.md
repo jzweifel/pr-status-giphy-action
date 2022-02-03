@@ -1,4 +1,4 @@
-# Pull Request Status Giphy Action
+# Pull Request Status Giphy Action Fork - Image URL Update for GitHub
 
 A GitHub Action that displays a random thumbs up or thumbs down gif from Giphy when all checks on a Pull Request complete.
 

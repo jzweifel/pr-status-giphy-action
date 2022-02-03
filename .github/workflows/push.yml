@@ -39,7 +39,7 @@ jobs:
     needs: [docker_build]
     name: Docker Tag and Publish
     runs-on: ubuntu-latest
-    if: contains(github.ref,'master')
+    if: contains(github.ref,'main')
     steps:
     - uses: actions/checkout@master
     - uses: elgohr/Publish-Docker-Github-Action@master
