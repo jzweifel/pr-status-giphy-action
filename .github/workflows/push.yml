@@ -42,7 +42,7 @@ jobs:
     if: contains(github.ref,'master')
     steps:
     - uses: actions/checkout@master
-    - uses: elgohr/Publish-Docker-Github-Action@master
+    - uses: elgohr/Publish-Docker-Github-Action@v5
       with:
         name: docker.pkg.github.com/jzweifel/pr-status-giphy-action/pr-status-giphy-action
         password: ${{ secrets.DOCKER_PASSWORD }}
